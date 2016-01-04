@@ -35,6 +35,14 @@ android {
         }
     }
 
+    dexOptions {
+        ci = "true".equals(System.getenv("CI"))
+        preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !ci
+    }
+
     packagingOptions {
         exclude 'LICENSE.txt'
     }
