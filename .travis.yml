@@ -3,6 +3,7 @@ language: android
 jdk:
  - oraclejdk8
 
+
 android:
   components:
     - platform-tools
@@ -10,10 +11,10 @@ android:
     - android-23
     - build-tools-23.0.2
     - extra-android-m2repository
-    - sys-img-armeabi-v7a-android-22
+    - sys-img-armeabi-v7a-$ANDROID_TARGET
 
 before_script:
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a --skin WXGA720
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi armeabi-v7a --skin WXGA720
   - emulator -avd test -no-audio -no-window &
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
@@ -21,9 +22,14 @@ before_script:
 script:
   - ./gradlew clean connectedCheck -i
 
+
 env:
   global:
     - ADB_INSTALL_TIMEOUT=8
+  matrix:
+    - ANDROID_TARGET=android-15
+    - ANDROID_TARGET=android-19
+    - ANDROID_TARGET=android-21
 
 notifications:
   email: false
