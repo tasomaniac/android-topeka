@@ -7,13 +7,16 @@ dependencies:
 test:
   override:
     # start the emulator
-    - emulator -avd circleci-android19 -no-audio -no-window:
+    - mksdcard -l e 512M mysdcard.img
+    - emulator -avd circleci-android19 -no-audio -no-window -no-boot-anim -sdcard mysdcard.img:
         background: true
         parallel: true
     # wait for it to have booted
     - circle-android wait-for-boot
+    - adb shell input keyevent 82:
+        background: true
     # run tests  against the emulator.
-    - ./gradlew connectedCheck
+    - ADB_INSTALL_TIMEOUT=10 ./gradlew connectedCheck
     # copy the build outputs to artifacts
     - cp -r app/build/outputs $CIRCLE_ARTIFACTS
     # copy the test results to the test results directory.
